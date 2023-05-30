@@ -4,6 +4,7 @@ import threading
 import datetime
 
 gui_blackbox_data_queue = queue.Queue(300)
+bat_basic_data_info_queue = queue.Queue(300)
 
 blackbox_data_len_dict = \
 {
@@ -38,6 +39,48 @@ blackbox_data_len_dict = \
     "cycle":2,
     "rem_cap":4,
 }
+
+bat_basic_data_len_dict = \
+{
+    "bat_vol":2,
+    "cc":2,
+    "rem_capacity":2,
+    "moni_capacity":2,
+    "cycle":2,
+    "fac_data":2,
+    "cell_status":4,
+    "protec_data":2,
+    "sf_ver":1,
+    "rsoc":1,
+    "fet_status":1,
+    "bat_serial_num":1,
+    "ntc_num":1,
+    "ntc_value_0":2,
+    "ntc_value_1":2,
+    "ntc_value_2":2,
+    "ntc_value_3":2,
+}
+
+# bat_basic_info_dict = \
+# {
+#     "bat_vol":0,
+#     "cc":0,
+#     "rem_capacity":0,
+#     "moni_capacity":0,
+#     "cycle":0,
+#     "fac_data":0,
+#     "cell_status":0,
+#     "protec_data":0,
+#     "sf_ver":0,
+#     "rsoc":0,
+#     "fet_status":0,
+#     "bat_serial_num":0,
+#     "ntc_num":0,
+#     "ntc_value_0":0,
+#     "ntc_value_1":0,
+#     "ntc_value_2":0,
+#     "ntc_value_3":0,
+# }
 
 class protol_recv_thread(threading.Thread):
     def __init__(self, cur_self, main_self):
@@ -102,6 +145,14 @@ class protol_recv_thread(threading.Thread):
                 data_parse_list.append(self.protol_parse_data(data,start_offset,data_item_len))
                 start_offset += data_item_len
             gui_blackbox_data_queue.put(data_parse_list)
+        elif 0x03 == code:
+            print("recv 0x03 comm data")
+            for item in bat_basic_data_len_dict:
+                data_item_len = bat_basic_data_len_dict[item]
+                data_parse_list.append(self.protol_parse_data(data,start_offset,data_item_len))
+                start_offset += data_item_len
+            bat_basic_data_info_queue.put(data_parse_list)
+
 
     def unpack(self,data):
         print("unpack data is {}" .format(data))
@@ -179,6 +230,7 @@ class protol_recv_thread(threading.Thread):
                     continue
             except queue.Empty:
                 continue
+
 class protol_send_thread(threading.Thread):
     def __init__(self, cur_self, main_self):
         super(protol_send_thread, self).__init__()
@@ -199,7 +251,8 @@ class protol_send_thread(threading.Thread):
                 if False == self.cur_self.send_queue.empty():
                     send_data = self.cur_self.send_queue.get()
                     # data_num = len(send_data)
-                    self.cur_self.serial.write(send_data)
+                    # self.main_self.uart.write(send_data) send_queue
+                    self.main_self.uart.uart_send_func(send_data)
                 else:
                     continue
             except queue.Empty:
@@ -224,16 +277,15 @@ class protol(object):
         self.send_thread.stop()
 
     def protol_send_func(self, data):
-        print("protol_send_func data is {}" .format(data))
+        print("protol_send_func is {}" .format(data))
         self.send_queue.put(data)
 
     def protol_recv_func(self, data):
         self.recv_queue.put(data)
 
     def get_crc(self, data):
-        print("get_crc data is {}" .format(data))
-        crc_list = []
         sum = 0
+        crc_list = []
         for item in data:
             sum += int(item)
         sum = ~sum
@@ -252,19 +304,20 @@ class protol(object):
         print("protol_pack_data")
         data_len = len(data)
         send_str = 'DD A5'
-        send_str = send_str + " " + data[0] # command
-        send_str = send_str + " " + data[1]  # len
+        send_str = send_str + ' ' + data[0] # command
+        send_str = send_str + ' ' + data[1]  # len
         if data_len > 1:
             for item in data[2:]:
-                send_str = send_str + " " + item
+                send_str = send_str + ' ' + item
         # get crc
-        crc = 0
-        crc = self.get_crc(data)
-        for item in crc:
-            send_str = send_str + " " + item
-
-        send_str = send_str + " " + '77'
-        self.protol_send_func(send_str)
+        crc_list = []
+        crc_list = self.get_crc(data)
+        for item in crc_list:
+            send_str = send_str + ' ' + str(item)
+        send_str = send_str + ' ' + '77'
+        return send_str
+        # self.protol_send_func(send_str)
         # return send_str
+
 
 
