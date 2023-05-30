@@ -105,7 +105,7 @@ class Uart_Send_Data_Thread(threading.Thread):
                     send_data = self.cur_self.send_queue.get(False)
                     data_num = len(send_data)
                     # 统计发送字符的数量
-                    self.main_self.uart_updata_send_num_signal.emit(data_num)
+                    #self.main_self.uart_updata_send_num_signal.emit(data_num)
                     #ascii 发送
                     self.cur_self.serial.write(send_data)
                 else:
