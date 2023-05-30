@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>966</width>
-    <height>592</height>
+    <width>953</width>
+    <height>619</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>951</width>
-      <height>551</height>
+      <width>931</width>
+      <height>581</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -36,31 +36,24 @@
         <x>10</x>
         <y>10</y>
         <width>157</width>
-        <height>249</height>
+        <height>181</height>
        </rect>
       </property>
       <property name="title">
        <string>串口接收设置</string>
       </property>
       <layout class="QFormLayout" name="formLayout_6">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>串口选择</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
+       <item row="0" column="0" colspan="2">
         <widget class="QComboBox" name="com_combo_box"/>
        </item>
-       <item row="2" column="0">
+       <item row="1" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>波特率</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="1" column="1">
         <widget class="QComboBox" name="baud_combo_box">
          <item>
           <property name="text">
@@ -174,14 +167,14 @@
          </item>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
           <string>停止位</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="2" column="1">
         <widget class="QComboBox" name="stopbit_combo_box">
          <item>
           <property name="text">
@@ -200,14 +193,14 @@
          </item>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>数据位</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="3" column="1">
         <widget class="QComboBox" name="databit_combo_box">
          <item>
           <property name="text">
@@ -231,14 +224,14 @@
          </item>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="label_7">
          <property name="text">
           <string>校验位</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="4" column="1">
         <widget class="QComboBox" name="checkbit_combo_box">
          <item>
           <property name="text">
@@ -257,35 +250,7 @@
          </item>
         </widget>
        </item>
-       <item row="6" column="0">
-        <widget class="QRadioButton" name="rec_ascii_radio_button">
-         <property name="text">
-          <string>ASCII</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QRadioButton" name="rec_hex_radio_button">
-         <property name="text">
-          <string>HEX</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QCheckBox" name="timestamp_check_box">
-         <property name="text">
-          <string>时间戳</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QPushButton" name="uart_clear_rec_push_button">
-         <property name="text">
-          <string>清除接收</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <widget class="QPushButton" name="uart_en_push_button">
          <property name="text">
           <string>打开串口</string>
@@ -299,8 +264,8 @@
        <rect>
         <x>260</x>
         <y>0</y>
-        <width>231</width>
-        <height>511</height>
+        <width>261</width>
+        <height>541</height>
        </rect>
       </property>
       <property name="title">
@@ -693,10 +658,10 @@
      <widget class="QGroupBox" name="groupBox_3">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>400</y>
+        <x>0</x>
+        <y>370</y>
         <width>235</width>
-        <height>111</height>
+        <height>161</height>
        </rect>
       </property>
       <property name="title">
@@ -768,10 +733,10 @@
      <widget class="QGroupBox" name="groupBox_4">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>260</y>
+        <x>0</x>
+        <y>190</y>
         <width>232</width>
-        <height>141</height>
+        <height>171</height>
        </rect>
       </property>
       <property name="title">
@@ -846,10 +811,10 @@
      <widget class="QGroupBox" name="groupBox_5">
       <property name="geometry">
        <rect>
-        <x>500</x>
+        <x>530</x>
         <y>0</y>
         <width>109</width>
-        <height>471</height>
+        <height>541</height>
        </rect>
       </property>
       <property name="title">
@@ -945,7 +910,7 @@
      <widget class="QGroupBox" name="groupBox_6">
       <property name="geometry">
        <rect>
-        <x>740</x>
+        <x>780</x>
         <y>0</y>
         <width>91</width>
         <height>151</height>
@@ -981,10 +946,10 @@
      <widget class="QGroupBox" name="groupBox_7">
       <property name="geometry">
        <rect>
-        <x>620</x>
+        <x>650</x>
         <y>0</y>
         <width>112</width>
-        <height>471</height>
+        <height>541</height>
        </rect>
       </property>
       <property name="title">
@@ -1108,7 +1073,7 @@
      <widget class="QPushButton" name="pushButton_read_data">
       <property name="geometry">
        <rect>
-        <x>760</x>
+        <x>780</x>
         <y>450</y>
         <width>75</width>
         <height>23</height>
@@ -1116,6 +1081,19 @@
       </property>
       <property name="text">
        <string>read</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_read_period">
+      <property name="geometry">
+       <rect>
+        <x>780</x>
+        <y>490</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>read_period</string>
       </property>
      </widget>
     </widget>
@@ -1126,10 +1104,10 @@
      <widget class="QTableView" name="blackbox_tableView">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>0</x>
         <y>0</y>
-        <width>1131</width>
-        <height>691</height>
+        <width>921</width>
+        <height>511</height>
        </rect>
       </property>
      </widget>
@@ -1159,6 +1137,32 @@
        <string>clear</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButton_bbox_read">
+      <property name="geometry">
+       <rect>
+        <x>670</x>
+        <y>520</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>read</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_bbox_clear">
+      <property name="geometry">
+       <rect>
+        <x>770</x>
+        <y>520</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>clear</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -1168,7 +1172,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>966</width>
+     <width>953</width>
      <height>22</height>
     </rect>
    </property>
