@@ -242,6 +242,9 @@ class MyPyQT_Form(QMainWindow, Ui_MainWindow):
                 self.gui_thread_run_flag = 1
                 self.gui_thread.start()
                 self.gui_thread.resume()
+            elif 2 == self.gui_thread_run_flag:
+                self.gui_thread_run_flag = 1
+                self.gui_thread.resume()
 
             data_send = ['03', '00']
             self.pack_read_bat_data(data_send)
@@ -259,7 +262,7 @@ class MyPyQT_Form(QMainWindow, Ui_MainWindow):
             if True == self.bat_read_data_timer_send.isActive():
                 self.pushButton_read_period.setText("read_period")
                 self.bat_read_data_timer_send.stop()
-                self.gui_thread_run_flag = 0
+                self.gui_thread_run_flag = 2
                 self.gui_thread.stop()
             else:
                 self.pushButton_read_period.setText("stop")
