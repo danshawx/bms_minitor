@@ -189,6 +189,40 @@ class MyPyQT_Form(QMainWindow, Ui_MainWindow):
         # self.read_data_thread = read_data_thread(self)
         # self.read_data_start_flag = 0
         # self.read_data_thread.start()
+        
+        self.bat_checkbox_init(self.checkBox_cov)
+        self.bat_checkbox_init(self.checkBox_cov)
+        self.bat_checkbox_init(self.checkBox_cuv)
+        self.bat_checkbox_init(self.checkBox_bov)
+        self.bat_checkbox_init(self.checkBox_buv)
+        self.bat_checkbox_init(self.checkBox_otc)
+        self.bat_checkbox_init(self.checkBox_utc)
+        self.bat_checkbox_init(self.checkBox_otd)
+        self.bat_checkbox_init(self.checkBox_utd)
+        self.bat_checkbox_init(self.checkBox_occ)
+        self.bat_checkbox_init(self.checkBox_ocd)
+        self.bat_checkbox_init(self.checkBox_scd)
+        self.bat_checkbox_init(self.checkBox_afe_error)
+        self.bat_checkbox_init(self.checkBox_cell1)
+        self.bat_checkbox_init(self.checkBox_cell2)
+        self.bat_checkbox_init(self.checkBox_cell3)
+        self.bat_checkbox_init(self.checkBox_cell4)
+        self.bat_checkbox_init(self.checkBox_cell5)
+        self.bat_checkbox_init(self.checkBox_cell6)
+        self.bat_checkbox_init(self.checkBox_cell7)
+        self.bat_checkbox_init(self.checkBox_cell8)
+        self.bat_checkbox_init(self.checkBox_cell9)
+        self.bat_checkbox_init(self.checkBox_cell10)
+        self.bat_checkbox_init(self.checkBox_cell11)
+        self.bat_checkbox_init(self.checkBox_cell12)
+        self.bat_checkbox_init(self.checkBox_cell13)
+        self.bat_checkbox_init(self.checkBox_cell14)
+        self.bat_checkbox_init(self.checkBox_cell15)
+        self.bat_checkbox_init(self.checkBox_cell16)
+        self.bat_checkbox_init(self.checkBox_fet_chg)
+        self.bat_checkbox_init(self.checkBox_fet_dsg)
+        self.bat_checkbox_init(self.checkBox_fet_pchg)
+        self.bat_checkbox_init(self.checkBox_fet_pdsg)
 
         # 绑定事件
         self.uart_en_push_button.clicked.connect(self.uart_en_push_button_cb)
@@ -215,6 +249,14 @@ class MyPyQT_Form(QMainWindow, Ui_MainWindow):
         # self.uart_timer_line_edit.setValidator(QIntValidator(1, 1000000))
         # self.uart_timer_line_edit.textChanged.connect(self.uart_set_send_time_line_edit_cb)
         # self.uart_timer_check_box.clicked.connect(self.uart_time_en_check_box_cb)
+        
+    def bat_checkbox_init(self, checkbox):
+        checkbox.setStyleSheet("QCheckBox::indicator:checked"
+                                "{"
+                                "background-color: red;"
+                                "border:           1px solid white;"
+                                "}")
+        checkbox.setAttribute(Qt.WA_TransparentForMouseEvents, True)
 
     def pack_read_bat_data(self, data):
         data_send = ['03', '00']
@@ -297,6 +339,26 @@ class MyPyQT_Form(QMainWindow, Ui_MainWindow):
         for item in data:
             table_list.append(QStandardItem(str(item)))
         self.table_mode.appendRow(table_list)
+        
+    def bat_checkbox_data_show(self, data, thr, qcheckbox):
+        if data & thr:
+            qcheckbox.setChecked(True)
+        else:
+            qcheckbox.setChecked(False)
+
+    def protect_data_show(self, data):
+        self.bat_checkbox_data_show(data, 0x01, self.checkBox_cov)
+        self.bat_checkbox_data_show(data, 0x02, self.checkBox_cuv)
+        self.bat_checkbox_data_show(data, 0x04, self.checkBox_bov)
+        self.bat_checkbox_data_show(data, 0x08, self.checkBox_buv)
+        self.bat_checkbox_data_show(data, 0x10, self.checkBox_otc)
+        self.bat_checkbox_data_show(data, 0x20, self.checkBox_utc)
+        self.bat_checkbox_data_show(data, 0x40, self.checkBox_otd)
+        self.bat_checkbox_data_show(data, 0x80, self.checkBox_utd)
+        self.bat_checkbox_data_show(data, 0x100, self.checkBox_occ)
+        self.bat_checkbox_data_show(data, 0x200, self.checkBox_ocd)
+        self.bat_checkbox_data_show(data, 0x400, self.checkBox_scd)
+        self.bat_checkbox_data_show(data, 0x800, self.checkBox_afe_error)
 
     def bat_basic_info_update(self, data):
         global bat_basic_data_len_dict
