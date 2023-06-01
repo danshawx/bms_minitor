@@ -5,6 +5,7 @@ import time
 if hasattr(sys, 'frozen'):
     os.environ['PATH'] = sys._MEIPASS + ";" + os.environ['PATH']
 import PyQt5
+import pywintypes
 import win32api,win32con
 
 # from Ui_uart_tool_ui import Ui_MainWindow
