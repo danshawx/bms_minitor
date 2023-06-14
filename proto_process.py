@@ -2,6 +2,7 @@
 import queue
 import threading
 import datetime
+import sys
 
 gui_blackbox_data_queue = queue.Queue(300)
 bat_basic_data_info_queue = queue.Queue(300)
@@ -88,18 +89,117 @@ class protol_recv_thread(threading.Thread):
         self.cur_self = cur_self
         self.main_self = main_self
         self.thread = threading.Event()
-
-        self.protol_phase = 0
-        self.protol_code = 0
-        self.protol_return = 0
-        self.protol_len = 0
-        self.protol_crc = 0
+        
         self.protol_lock = 0
+        
+    def stop(self):
+#         self.thread.set()
+        self.thread.clear()
+    
+    def resume(self):
+        self.thread.set()
+        
+    def stopped(self):
+        return self.thread.is_set()
+    
+    def run(self):
+        while True:
+            self.thread.wait()
+#             if self.stopped():
+#                 break
+            try:
+                if False == self.cur_self.recv_queue.empty() and 0 == self.protol_lock:
+                    self.protol_lock = 1
+                    data = self.cur_self.recv_queue.get()
+                    self.unpack(data)
+                    self.protol_lock = 0
+                else:
+                    self.stop()
+#                     continue
+            except queue.Empty:
+                continue
+
+class protol_send_thread(threading.Thread):
+    def __init__(self, cur_self, main_self):
+        super(protol_send_thread, self).__init__()
+        self.cur_self = cur_self
+        self.main_self = main_self
+        self.thread = threading.Event()
+
     def stop(self):
         self.thread.set()
     def stopped(self):
         return self.thread.is_set()
 
+    def run(self):
+        while True:
+            if self.stopped():
+                break
+            try:
+                if False == self.cur_self.send_queue.empty():
+                    send_data = self.cur_self.send_queue.get()
+                    # data_num = len(send_data)
+                    # self.main_self.uart.write(send_data) send_queue
+                    self.main_self.uart.uart_send_func(send_data)
+                else:
+                    continue
+            except queue.Empty:
+                continue
+
+class protol(object):
+    def __init__(self, parent, verbosity=20):
+        self.parent = parent
+        self.recv_queue = queue.Queue(1000)
+        self.send_queue = queue.Queue(1000)
+        self.verbosity = verbosity
+        self.protol_code = 0
+        self.protol_return = 0
+        self.protol_len = 0
+        self.protol_crc = 0
+        self.protol_phase = 0
+
+    def protol_init(self):
+        self.recv_thread = protol_recv_thread(self, self.parent)
+        self.send_thread = protol_send_thread(self, self.parent)
+        
+    def debug(self, level, msg):
+        if self.verbosity >= level:
+            print(msg, file=sys.stderr)
+
+    def open_protol_thread(self):
+        self.recv_thread.start()
+        self.send_thread.start()
+
+    def close_protol_thread(self):
+        self.recv_thread.stop()
+        self.send_thread.stop()
+
+    def protol_send_func(self, data):
+        print("protol_send_func is {}" .format(data))
+        self.send_queue.put(data)
+        self.clear_unpack_var()
+        self.send_thread.resume()
+
+    def protol_recv_func(self, data):
+        self.recv_queue.put(data)
+        self.recv_thread.resume()
+
+    def get_crc(self, data):
+        sum = 0
+        crc_list = []
+        for item in data:
+            sum += item
+        sum = ~sum
+        sum += 1
+        result = sum
+        if sum < 0:
+            result = int.from_bytes((sum).to_bytes(4, 'little', signed=True),'little',signed=False)
+            result = result & 0x0000ffff
+        print("get_crc result is {}" .format(result))
+        crc_list.append(int(hex(result)[0:4], 16))
+        crc_list.append(int(hex(result)[4:6], 16))
+        return crc_list
+    
     def check_crc(self):
         sum = 0
         sum += self.protol_return
@@ -152,7 +252,13 @@ class protol_recv_thread(threading.Thread):
                 data_parse_list.append(self.protol_parse_data(data,start_offset,data_item_len))
                 start_offset += data_item_len
             bat_basic_data_info_queue.put(data_parse_list)
-
+            
+    def clear_unpack_var(self):
+        self.protol_code = 0
+        self.protol_return = 0
+        self.protol_len = 0
+        self.protol_crc = 0
+        self.protol_phase = 0
 
     def unpack(self,data):
         print("unpack data is {}" .format(data))
@@ -217,107 +323,47 @@ class protol_recv_thread(threading.Thread):
                 del self.crc_list
         self.protol_lock = 0
 
-    def run(self):
-        while True:
-            if self.stopped():
-                break
-            try:
-                if False == self.cur_self.recv_queue.empty() and 0 == self.protol_lock:
-                    self.protol_lock = 1
-                    data = self.cur_self.recv_queue.get()
-                    self.unpack(data)
-                else:
-                    continue
-            except queue.Empty:
-                continue
-
-class protol_send_thread(threading.Thread):
-    def __init__(self, cur_self, main_self):
-        super(protol_send_thread, self).__init__()
-        self.cur_self = cur_self
-        self.main_self = main_self
-        self.thread = threading.Event()
-
-    def stop(self):
-        self.thread.set()
-    def stopped(self):
-        return self.thread.is_set()
-
-    def run(self):
-        while True:
-            if self.stopped():
-                break
-            try:
-                if False == self.cur_self.send_queue.empty():
-                    send_data = self.cur_self.send_queue.get()
-                    # data_num = len(send_data)
-                    # self.main_self.uart.write(send_data) send_queue
-                    self.main_self.uart.uart_send_func(send_data)
-                else:
-                    continue
-            except queue.Empty:
-                continue
-
-class protol(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.recv_queue = queue.Queue(1000)
-        self.send_queue = queue.Queue(1000)
-
-    def protol_init(self):
-        self.recv_thread = protol_recv_thread(self, self.parent)
-        self.send_thread = protol_send_thread(self, self.parent)
-
-    def open_protol_thread(self):
-        self.recv_thread.start()
-        self.send_thread.start()
-
-    def close_protol_thread(self):
-        self.recv_thread.stop()
-        self.send_thread.stop()
-
-    def protol_send_func(self, data):
-        print("protol_send_func is {}" .format(data))
-        self.send_queue.put(data)
-
-    def protol_recv_func(self, data):
-        self.recv_queue.put(data)
-
-    def get_crc(self, data):
-        sum = 0
-        crc_list = []
-        for item in data:
-            sum += int(item)
-        sum = ~sum
-        sum += 1
-        result = sum
-        if sum < 0:
-            result = int.from_bytes((sum).to_bytes(4, 'little', signed=True),'little',signed=False)
-            result = result & 0x0000ffff
-        print("get_crc result is {}" .format(result))
-        crc_list.append(hex(result)[2:4].upper())
-        crc_list.append(hex(result)[4:6].upper())
-        return crc_list
-
     # data:[command, len, effective-data],str
     def protol_pack_data(self, data):
-        print("protol_pack_data")
-        data_len = len(data)
-        send_str = 'DD A5'
-        send_str = send_str + ' ' + data[0] # command
-        send_str = send_str + ' ' + data[1]  # len
-        if data_len > 1:
-            for item in data[2:]:
-                send_str = send_str + ' ' + item
+        self.debug(10, "protol_pack_data " + ''.join(str(item) for item in data))
+        cmd = data[0]
+        data_len = data[1]
+        send_str = [0xDD]
+        if self.SET_FET_CTRL == cmd:
+            send_str.append(0x5A)
+        else:
+            send_str.append(0xA5)
+        send_str.append(cmd)
+        send_str.append(data_len)
+        if data_len > 0:
+            for item in data:
+                send_str.append(item)
         # get crc
         crc_list = []
-        crc_list = self.get_crc(data)
+        crc_list = self.get_crc(send_str)
         for item in crc_list:
-            send_str = send_str + ' ' + str(item)
-        send_str = send_str + ' ' + '77'
-        return send_str
-        # self.protol_send_func(send_str)
-        # return send_str
+            send_str.append(item)
+        send_str.append(0x77)
+        # print("send_str {}".format(send_str))
+        self.protol_send_func(send_str)
 
+    def command(self, cmd, description, data):
+        self.debug(10, "*** Command: %s" % description)
+        send_list = []
+        data_len = len(data)
+        send_list.append(cmd)
+        send_list.append(data_len)
+        if data_len > 0:
+            for item in data:
+                send_list.append(item)
+        self.protol_pack_data(send_list)
 
+    def get_board_info(self):
+        self.command(self.GET_BOARD_INFO, "get_board_info", [])
+
+    def get_cells_vol(self):
+        self.command(self.GET_CELLS_VOL, "get_cells_vol", [])
+
+    def get_basic_data(self):
+        self.command(self.GET_BASIC_DATA, "get_basic_data", [])
 
