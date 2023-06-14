@@ -79,32 +79,32 @@ class read_data_thread(threading.Thread):
     # def stopped(self):
     #     return self.thread.is_set()
 
-    def uart_send_hex_pack(self, item):
-        toSend = 0
-        # databit = self.databit_combo_box.currentText()
-        databit = '8'
-        if item != '':
-            toSend = int(item, 16)
+#     def uart_send_hex_pack(self, item):
+#         toSend = 0
+#         # databit = self.databit_combo_box.currentText()
+#         databit = '8'
+#         if item != '':
+#             toSend = int(item, 16)
 
-            if toSend > 255 and databit == '8':
-                # print_time_stamp()  # print timestamp
-                # print_fatal(hex(toSend) + ' does not fit in a byte! This shouldn\'t happen!')
-                toSend = ''
-            elif toSend > 127 and databit == '7':
-                # print_time_stamp()  # print timestamp
-                # print_fatal(hex(toSend) + ' does not fit in 7 bits! This shouldn\'t happen!')
-                toSend = ''
-            elif toSend > 63 and databit == '6':
-                # print_time_stamp()  # print timestamp
-                # print_fatal(hex(toSend) + ' does not fit in 6 bits! This shouldn\'t happen!')
-                toSend = ''
-            elif toSend > 31 and databit == '5':
-                # print_time_stamp()  # print timestamp
-                # print_fatal(hex(toSend) + ' does not fit in 5 bits! This shouldn\'t happen!')
-                toSend = ''
-            return toSend
-        else:
-            return item
+#             if toSend > 255 and databit == '8':
+#                 # print_time_stamp()  # print timestamp
+#                 # print_fatal(hex(toSend) + ' does not fit in a byte! This shouldn\'t happen!')
+#                 toSend = ''
+#             elif toSend > 127 and databit == '7':
+#                 # print_time_stamp()  # print timestamp
+#                 # print_fatal(hex(toSend) + ' does not fit in 7 bits! This shouldn\'t happen!')
+#                 toSend = ''
+#             elif toSend > 63 and databit == '6':
+#                 # print_time_stamp()  # print timestamp
+#                 # print_fatal(hex(toSend) + ' does not fit in 6 bits! This shouldn\'t happen!')
+#                 toSend = ''
+#             elif toSend > 31 and databit == '5':
+#                 # print_time_stamp()  # print timestamp
+#                 # print_fatal(hex(toSend) + ' does not fit in 5 bits! This shouldn\'t happen!')
+#                 toSend = ''
+#             return toSend
+#         else:
+#             return item
 
     def run(self):
         while True:
@@ -112,25 +112,26 @@ class read_data_thread(threading.Thread):
             #     break
             self.thread.wait()
             try:
-                print("read_data_thread running ...")
+                self.cur_self.protol.get_basic_data()
+#                 print("read_data_thread running ...")
                 # TODO:
-                data_send = ['03', '00']
-                send_data = ''
-                send_str_list = ''
-                result_data = self.cur_self.protol.protol_pack_data(data_send)
-                print("result_data is {}" .format(result_data))
-                for item in result_data.split(' '):
-                    # print(item)
-                    toSend = self.uart_send_hex_pack(item)
-                    if toSend == '':
-                        continue
-                    send_str_list += item
-                    send_str_list += '\t'
-                    send_data = toSend.to_bytes(1, 'little')
-                    self.cur_self.uart.uart_send_func(send_data)
-                send_data_list = 'send: '
-                send_data_list += result_data
-                self.cur_self.log.tool_log_log(send_data_list)
+#                 data_send = ['03', '00']
+#                 send_data = ''
+#                 send_str_list = ''
+#                 result_data = self.cur_self.protol.protol_pack_data(data_send)
+#                 print("result_data is {}" .format(result_data))
+#                 for item in result_data.split(' '):
+#                     # print(item)
+#                     toSend = self.uart_send_hex_pack(item)
+#                     if toSend == '':
+#                         continue
+#                     send_str_list += item
+#                     send_str_list += '\t'
+#                     send_data = toSend.to_bytes(1, 'little')
+#                     self.cur_self.uart.uart_send_func(send_data)
+#                 send_data_list = 'send: '
+#                 send_data_list += result_data
+#                 self.cur_self.log.tool_log_log(send_data_list)
 
                 time.sleep(5)
             except Exception as e:
@@ -259,24 +260,24 @@ class MyPyQT_Form(QMainWindow, Ui_MainWindow):
                                 "}")
         checkbox.setAttribute(Qt.WA_TransparentForMouseEvents, True)
 
-    def pack_read_bat_data(self, data):
-        data_send = ['03', '00']
-        send_data = ''
-        send_str_list = ''
-        result_data = self.protol.protol_pack_data(data)
-        print("result_data is {}".format(result_data))
-        for item in result_data.split(' '):
-            # print(item)
-            toSend = self.uart_send_hex_pack(item)
-            if toSend == '':
-                continue
-            send_str_list += item
-            send_str_list += '\t'
-            send_data = toSend.to_bytes(1, 'little')
-            self.uart.uart_send_func(send_data)
-        send_data_list = 'send: '
-        send_data_list += result_data
-        self.log.tool_log_log(send_data_list)
+#     def pack_read_bat_data(self, data):
+#         data_send = ['03', '00']
+#         send_data = ''
+#         send_str_list = ''
+#         result_data = self.protol.protol_pack_data(data)
+#         print("result_data is {}".format(result_data))
+#         for item in result_data.split(' '):
+#             # print(item)
+#             toSend = self.uart_send_hex_pack(item)
+#             if toSend == '':
+#                 continue
+#             send_str_list += item
+#             send_str_list += '\t'
+#             send_data = toSend.to_bytes(1, 'little')
+#             self.uart.uart_send_func(send_data)
+#         send_data_list = 'send: '
+#         send_data_list += result_data
+#         self.log.tool_log_log(send_data_list)
 
     def read_bat_data(self):
         if 1 == self.uart_com_run_status:
@@ -288,14 +289,16 @@ class MyPyQT_Form(QMainWindow, Ui_MainWindow):
             elif 2 == self.gui_thread_run_flag:
                 self.gui_thread_run_flag = 1
                 self.gui_thread.resume()
+                
+            self.protol.get_basic_data()
 
-            data_send = ['03', '00']
-            self.pack_read_bat_data(data_send)
-            del data_send
-            # time.sleep(1)
-            # data_send = ['03', '00']
-            # self.pack_read_bat_data[data_send]
-            # del data_send
+#             data_send = ['03', '00']
+#             self.pack_read_bat_data(data_send)
+#             del data_send
+#             # time.sleep(1)
+#             # data_send = ['03', '00']
+#             # self.pack_read_bat_data[data_send]
+#             # del data_send
 
     def bat_read_data_timer_send_cb(self):
         self.read_bat_data()
