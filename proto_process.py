@@ -147,6 +147,11 @@ class protol_send_thread(threading.Thread):
                 continue
 
 class protol(object):
+    GET_BASIC_DATA = 0x03
+    GET_CELLS_VOL = 0x04
+    GET_BOARD_INFO = 0x05
+    SET_FET_CTRL = 0x0E
+    
     def __init__(self, parent, verbosity=20):
         self.parent = parent
         self.recv_queue = queue.Queue(1000)
