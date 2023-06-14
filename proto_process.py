@@ -111,7 +111,7 @@ class protol_recv_thread(threading.Thread):
                 if False == self.cur_self.recv_queue.empty() and 0 == self.protol_lock:
                     self.protol_lock = 1
                     data = self.cur_self.recv_queue.get()
-                    self.unpack(data)
+                    self.cur_self.unpack(data)
                     self.protol_lock = 0
                 else:
                     self.stop()
